@@ -2,9 +2,15 @@ package org.example;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.MemberStatus;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -155,6 +161,117 @@ public class MyAmazingBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
+        Long id = update.getMessage().getFrom().getId();
+        GetChatMember getChatMember = new GetChatMember();
+
+
+        getChatMember.setUserId(update.getMessage().getChatId());
+        getChatMember.setChatId("@uz_avtoshop");
+
+        if (update.hasCallbackQuery()) {
+            if (update.getCallbackQuery().getData().equals("check")) {
+
+                DeleteMessage deleteMessage = new DeleteMessage("" + id, update.getMessage().getMessageId());
+
+                try {
+                    execute(deleteMessage);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                ChatMember chatMember;
+                try {
+                    chatMember = execute(getChatMember);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (chatMember.getStatus().equals("left")) {
+                    SendMessage msg = new SendMessage("" + id, "Botdan foydalanish uchun kanalga a'zo bo'ling!");
+                    InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+                    List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+                    InlineKeyboardButton button1 = new InlineKeyboardButton();
+                    button1.setText("Kanal ↗\uFE0F");
+                    button1.setUrl("https://t.me/uz_avtoshop");
+                    button1.setCallbackData("channel");
+
+                    InlineKeyboardButton button2 = new InlineKeyboardButton();
+                    button2.setText("A'zo bo'ldim ✅");
+                    button2.setCallbackData("check");
+                    rowsInline.add(Collections.singletonList(button1));
+                    rowsInline.add(Collections.singletonList(button2));
+                    markupInline.setKeyboard(rowsInline);
+                    msg.setReplyMarkup(markupInline);
+
+
+                    try {
+                        execute(msg);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    user.setType(0);
+                    user.setFrom(null);
+                    user.setTo(null);
+                    user.setValue(null);
+                    String message_text2 = "Botdan foydalanish uchun quyidagi buyruqlardan birini tanlang\uD83D\uDC47";
+                    List<KeyboardRow> rows = new ArrayList<>();
+                    rows.add(new KeyboardRow(Arrays.asList(new KeyboardButton("Yuza bilan ishlash"))));
+                    rows.add(new KeyboardRow(Arrays.asList(new KeyboardButton("Uzunlik bilan ishlash"))));
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(rows);
+                    replyKeyboardMarkup.setResizeKeyboard(true);
+                    SendMessage msg2 = new SendMessage();
+                    msg2.setReplyMarkup(replyKeyboardMarkup);
+                    msg2.setChatId(id);
+                    msg2.setText(message_text2);
+
+                    try {
+                        execute(msg2);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            return;
+        }
+
+
+        ChatMember chatMember;
+        try {
+            chatMember = execute(getChatMember);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (chatMember.getStatus().equals("left")) {
+            SendMessage msg = new SendMessage("" + id, "Botdan foydalanish uchun kanalga a'zo bo'ling!");
+            InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+            List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+            InlineKeyboardButton button1 = new InlineKeyboardButton();
+            button1.setText("Kanal ↗\uFE0F");
+            button1.setUrl("https://t.me/uz_avtoshop");
+            button1.setCallbackData("channel");
+
+            InlineKeyboardButton button2 = new InlineKeyboardButton();
+            button2.setText("A'zo bo'ldim ✅");
+            button2.setCallbackData("check");
+            rowsInline.add(Collections.singletonList(button1));
+            rowsInline.add(Collections.singletonList(button2));
+            markupInline.setKeyboard(rowsInline);
+            msg.setReplyMarkup(markupInline);
+
+
+            try {
+                execute(msg);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+
+            return;
+        }
+
+
         try {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(778559200L);
@@ -172,7 +289,6 @@ public class MyAmazingBot extends TelegramLongPollingBot {
         System.out.println(update.getMessage().getFrom().getLastName());
         System.out.println("@" + update.getMessage().getFrom().getUserName());
         System.out.println(update.getMessage().getChatId());
-        Long id = update.getMessage().getFrom().getId();
         if (!usersMap.containsKey(id)) {
             usersMap.put(id, new Users());
         } else {
