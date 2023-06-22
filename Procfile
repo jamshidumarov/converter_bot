@@ -1,1 +1,1 @@
-worker: sh target/bin/converter-bot
+worker: sh target/bin/converter_bot
