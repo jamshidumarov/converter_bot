@@ -160,7 +160,7 @@ public class MyAmazingBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Long myID = 778559200L;
+        Long myID = 0L;
         Long id = update.getMessage().getFrom().getId();
 
 
@@ -431,6 +431,6 @@ public class MyAmazingBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "6134089612:AAG8C3JZ4lF_xvXl3tmYsYNJrjqMJptKgsY";
+        return "";
     }
 }
