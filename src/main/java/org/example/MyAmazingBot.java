@@ -160,12 +160,13 @@ public class MyAmazingBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-
+        Long myID = 778559200L;
         Long id = update.getMessage().getFrom().getId();
+
 
         try {
             SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(778559200L);
+            sendMessage.setChatId(myID);
             sendMessage.setText(
                     "first_name: " + update.getMessage().getFrom().getFirstName() + "\n" +
                             "last_name: " + update.getMessage().getFrom().getLastName() + "\n" +
